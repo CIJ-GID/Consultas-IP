@@ -166,7 +166,7 @@ button[type="button"]:disabled {
 button[type="submit"] {
   font-size: 14px;
   padding: 8px 16px;
-  background: linear-gradient(to bottom right, #222, #333);
+  background: linear-gradient(to bottom right, #3B4F5F, #006473);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -187,12 +187,11 @@ h1 {
   
 }
 body {
-  background: #1c1c1c
+  background: linear-gradient(to bottom right, #3B4F5F, #006473);
 }
 .input-file {
   font-size: 14px;
   padding: 8px 16px;
-  background: linear-gradient(to bottom right, #222, #333);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -200,13 +199,10 @@ body {
   transition: all 0.2s ease-in-out;
 }
 
-.input-file:hover {
-  background-color: #ccc;
-}
 .small-button {
   font-size: 14px;
   padding: 8px 16px;
-  background: linear-gradient(to bottom right, #222, #333);
+  background: linear-gradient(to bottom right, #3B4F5F, #006473);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -214,7 +210,7 @@ body {
   transition: all 0.2s ease-in-out;
 }
 .result-box {
-  background-color: #000000;
+  background: linear-gradient(to bottom right, #2a3742, #004a55);
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 10px;
@@ -225,4 +221,27 @@ html {
 }
 html {
   overflow-y: hidden;
+}
+.ip-list {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.ip-list div {
+  margin-bottom: 20px;
+}
+
+.ip-list ul {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.ip-list li {
+  list-style: none;
+  margin-bottom: 5px;
+}
+@font-face {
+  font-family: 'My Font';
+  src: url('fuentes/THEBOLDFONT 2022.otf') format('opentype');
 }

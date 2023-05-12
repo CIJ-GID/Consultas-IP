@@ -49,18 +49,18 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="title">Consulta de direcciones IP</h1>
+      <h1 className="title" style={{ fontFamily: 'My Font' }}>IP-info-CIJ</h1>
       <div className="result-box">
         <form onSubmit={handleFileSubmit}>
           <label>
-            Cargue las ip:⁯⁯⁯⁯
+            Cargue el listado:⁯⁯⁯⁯
             <input type="file" onChange={handleFileChange} className="input-file" />
           </label>
           <button type="submit" className="small-button">
             Consultar
           </button>
         </form>
-        <h2 className="subtitle">Resultados</h2>
+        <h2 className="subtitle">Resultados:</h2>
         {ipList.length > 0 ? (
           <>
             <button onClick={handleDownload} className="small-button">
