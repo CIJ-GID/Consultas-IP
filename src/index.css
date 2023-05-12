@@ -163,11 +163,6 @@ button[type="button"]:disabled {
   }
 }
 
-
-
-
-
-
 button[type="submit"] {
   font-size: 14px;
   padding: 8px 16px;
@@ -224,4 +219,10 @@ body {
   border-radius: 10px;
   padding: 10px;
   margin-top: 20px;
+}
+html {
+  overflow-x: hidden;
+}
+html {
+  overflow-y: hidden;
 }
