@@ -7,13 +7,33 @@ function App() {
   const [ipList, setIpList] = useState([]);
   const [currentIp, setCurrentIp] = useState("");
   const [fileContent, setFileContent] = useState("");
-
-  const access_token = "814ee26772f463";
-
-  const handleIpChange = (event) => {
-    setCurrentIp(event.target.value);
+  const [manualIp, setManualIp] = useState("");
+  const handleManualIpSubmit = (event) => {
+    event.preventDefault();
+    const ipArray = manualIp.trim().split(/\s+/);
+    const requests = ipArray.map((ip) => axios.get(`https://ipinfo.io/${ip}?token=${access_token}`));
+    Promise.all(requests)
+      .then((responses) => {
+        const ipData = responses.map((response) => ({
+          ip: response.data.ip,
+          org: response.data.org,
+        }));
+        setIpList([...ipList, ...ipData]);
+      })
+      .catch((error) => console.log(error));
+    setManualIp("");
   };
-
+  const handleDeleteIp = (index) => {
+    const filteredList = ipList.filter((ipData, idx) => idx !== index);
+    setIpList(filteredList);
+  };
+  
+  const access_token = "814ee26772f463";
+  
+  const handleManualIpChange = (e) => {
+    setManualIp(e.target.value);
+  };
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -51,39 +71,52 @@ function App() {
     <div className="container">
       <h1 className="title" style={{ fontFamily: 'My Font' }}>IP-info-CIJ</h1>
       <div className="result-box">
-        <form onSubmit={handleFileSubmit}>
-          <label>
-            Cargue el listado:⁯⁯⁯⁯
-            <input type="file" onChange={handleFileChange} className="input-file" />
-          </label>
-          <button type="submit" className="small-button">
-            Consultar
-          </button>
-        </form>
-        <h2 className="subtitle">Resultados:</h2>
-        {ipList.length > 0 ? (
-          <>
-            <button onClick={handleDownload} className="small-button">
-              Descargar resultados
-            </button>
-            <div className="ip-list">
-              {ipList.map((ipData, index) => (
-                <div key={index}>
-                  <p>
-                    <strong>{ipData.ip}</strong>
-                  </p>
-                  <ul>
-                    <li>Organización: {ipData.org}</li>
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <p>No se han consultado direcciones IP</p>
-        )}
+      <form onSubmit={handleFileSubmit}>
+  <label>
+    Cargue el listado:
+    <input type="file" onChange={handleFileChange} className="input-file" />
+  </label>
+  <button type="submit" className="small-button">
+    Consultar
+  </button>
+</form>
+<form onSubmit={handleManualIpSubmit}>
+  <label>
+    Ingrese una dirección IP:
+  </label>
+    <input type="text" value={manualIp} onChange={(e) => handleManualIpChange(e)} className="input-text" />
+  <button type="submit" className="small-button">
+    Cargar manualmente
+  </button>
+</form>
+<h2 className="subtitle">Resultados:</h2>
+{ipList.length > 0 ? (
+  <>
+    <button onClick={handleDownload} className="small-button">
+      Descargar resultados
+    </button>
+    <div className="ip-list">
+      {ipList.map((ipData, index) => (
+        <div key={index}>
+          <p>
+            <strong>{ipData.ip}</strong>
+          </p>
+          <ul>
+            <li>Organización: {ipData.org}</li>
+          </ul>
+          <button onClick={() => handleDeleteIp(index)} className="small-button button-primary">Eliminar</button>
+
+        </div>
+      ))}
+    </div>
+  </>
+) : (
+  <p>No se encontraron resultados.</p>
+)}
+
       </div>
     </div>
+    
   );
 }
 

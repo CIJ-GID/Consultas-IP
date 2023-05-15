@@ -7,15 +7,9 @@
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
   font-weight: 500;
-}
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
   color: white;
 }
+
 
 body,
 body::after,
@@ -244,4 +238,14 @@ html {
 @font-face {
   font-family: 'My Font';
   src: url('fuentes/THEBOLDFONT 2022.otf') format('opentype');
+}
+.input-text {
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: black; /* Agregar esta línea para cambiar el color del texto */
+  font-size: 14px;
+  padding: 10px;
+  width: 100%;
 }
