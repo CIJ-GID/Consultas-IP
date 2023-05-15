@@ -5,6 +5,10 @@ import * as XLSX from "xlsx";
 
 function App() {
   const [ipList, setIpList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const setLoadingState = (value) => {
+    setLoading(value);
+  };  
   const [currentIp, setCurrentIp] = useState("");
   const [fileContent, setFileContent] = useState("");
   const [manualIp, setManualIp] = useState("");
@@ -51,6 +55,7 @@ function App() {
 
   const handleFileSubmit = (event) => {
     event.preventDefault();
+    setLoadingState(true); // Agrega esta línea
     const ipArray = fileContent.split(/\r?\n/).filter((ip) => ip !== "");
     const requests = ipArray.map((ip) => axios.get(`https://ipinfo.io/${ip}?token=${access_token}`));
     Promise.all(requests)
@@ -61,9 +66,10 @@ function App() {
         }));
         setIpList(ipData);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setLoadingState(false)); // Agrega esta línea
   };
-
+  
   const handleDownload = () => {
     const worksheet = XLSX.utils.json_to_sheet(ipList, { header: ["ip", "org"] });
     const workbook = XLSX.utils.book_new();
@@ -95,12 +101,17 @@ function App() {
     Cargar manualmente
   </button>
 </form>
-<h2 className="subtitle">Resultados:</h2>
+<div class="loading-container">
+{loading && <img className="loading-gif" src="https://api.clubpasaportepremium.com//img/icons/cargando.gif" alt="Cargando..."/>}
+</div>
+
 {ipList.length > 0 ? (
   <>
+  <h2 className="subtitle">Resultados:</h2>
     <button onClick={handleDownload} className="small-button">
       Descargar resultados
     </button>
+    
     <div className="ip-list">
       {ipList.map((ipData, index) => (
         <div key={index}>
@@ -117,7 +128,7 @@ function App() {
     </div>
   </>
 ) : (
-  <p>No se encontraron resultados.</p>
+  <p></p>
 )}
 
       </div>

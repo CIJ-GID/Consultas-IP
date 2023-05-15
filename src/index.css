@@ -253,3 +253,11 @@ html {
   max-height: 400px;
   overflow-y: auto;
 }
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+}
