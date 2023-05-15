@@ -249,3 +249,7 @@ html {
   padding: 10px;
   width: 100%;
 }
+.ip-list {
+  max-height: 400px;
+  overflow-y: auto;
+}

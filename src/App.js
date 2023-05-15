@@ -10,6 +10,10 @@ function App() {
   const [manualIp, setManualIp] = useState("");
   const handleManualIpSubmit = (event) => {
     event.preventDefault();
+    if (manualIp.trim() === "") {
+      console.log("Ingrese una dirección IP.");
+      return;
+    }
     const ipArray = manualIp.trim().split(/\s+/);
     const requests = ipArray.map((ip) => axios.get(`https://ipinfo.io/${ip}?token=${access_token}`));
     Promise.all(requests)
@@ -23,6 +27,8 @@ function App() {
       .catch((error) => console.log(error));
     setManualIp("");
   };
+  
+
   const handleDeleteIp = (index) => {
     const filteredList = ipList.filter((ipData, idx) => idx !== index);
     setIpList(filteredList);
@@ -82,7 +88,7 @@ function App() {
 </form>
 <form onSubmit={handleManualIpSubmit}>
   <label>
-    Ingrese una dirección IP:
+    Ingrese las IP's:
   </label>
     <input type="text" value={manualIp} onChange={(e) => handleManualIpChange(e)} className="input-text" />
   <button type="submit" className="small-button">
