@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+import { css } from "@emotion/react";
+import { PacmanLoader, RingLoader } from "react-spinners";
+
 
 function App() {
   const [ipList, setIpList] = useState([]);
@@ -101,9 +104,20 @@ function App() {
     Cargar manualmente
   </button>
 </form>
-<div class="loading-container">
-{loading && <img className="loading-gif" src="https://api.clubpasaportepremium.com//img/icons/cargando.gif" alt="Cargando..."/>}
+<div className="loading-container">
+  {loading && (
+    <RingLoader
+      css={css`
+        margin: 0 auto;
+        display: block;
+      `}
+      size={50}
+      color={"#FFFFFF"}
+      loading={true}
+    />
+  )}
 </div>
+
 
 {ipList.length > 0 ? (
   <>

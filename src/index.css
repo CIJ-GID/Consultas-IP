@@ -261,3 +261,12 @@ html {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
 }
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loading-gif {
+  max-width: 100px;
+  max-height: 100px;
+}
