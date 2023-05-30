@@ -5,16 +5,16 @@ import * as XLSX from "xlsx";
 import { css } from "@emotion/react";
 import { PacmanLoader, RingLoader } from "react-spinners";
 
-
 function App() {
   const [ipList, setIpList] = useState([]);
   const [loading, setLoading] = useState(false);
   const setLoadingState = (value) => {
     setLoading(value);
-  };  
+  };
   const [currentIp, setCurrentIp] = useState("");
   const [fileContent, setFileContent] = useState("");
   const [manualIp, setManualIp] = useState("");
+
   const handleManualIpSubmit = (event) => {
     event.preventDefault();
     if (manualIp.trim() === "") {
@@ -31,34 +31,17 @@ function App() {
         }));
         setIpList([...ipList, ...ipData]);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        window.alert("Porfavor desactiva el bloqueador de anuncios (adblocker) para que la web funcione correctamente.");
+      });
     setManualIp("");
   };
-  
-
-  const handleDeleteIp = (index) => {
-    const filteredList = ipList.filter((ipData, idx) => idx !== index);
-    setIpList(filteredList);
-  };
-  
+  let requests;
   const access_token = "814ee26772f463";
-  
-  const handleManualIpChange = (e) => {
-    setManualIp(e.target.value);
-  };
-  
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setFileContent(event.target.result);
-    };
-    reader.readAsText(file);
-  };
-
   const handleFileSubmit = (event) => {
     event.preventDefault();
-    setLoadingState(true); // Agrega esta línea
+    setLoadingState(true);
     const ipArray = fileContent.split(/\r?\n/).filter((ip) => ip !== "");
     const requests = ipArray.map((ip) => axios.get(`https://ipinfo.io/${ip}?token=${access_token}`));
     Promise.all(requests)
@@ -69,10 +52,32 @@ function App() {
         }));
         setIpList(ipData);
       })
-      .catch((error) => console.log(error))
-      .finally(() => setLoadingState(false)); // Agrega esta línea
+      .catch((error) => {
+        console.log(error);
+        window.alert("Se produjo un error de red. Verifica tu conexión a Internet y asegúrate de que el adblocker esté desactivado.");
+      })
+      .finally(() => setLoadingState(false));
   };
   
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const contents = e.target.result;
+      setFileContent(contents);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleManualIpChange = (event) => {
+    setManualIp(event.target.value);
+  };
+
+  const handleDeleteIp = (ip) => {
+    const updatedList = ipList.filter((item) => item.ip !== ip);
+    setIpList(updatedList);
+  };
+
   const handleDownload = () => {
     const worksheet = XLSX.utils.json_to_sheet(ipList, { header: ["ip", "org"] });
     const workbook = XLSX.utils.book_new();
