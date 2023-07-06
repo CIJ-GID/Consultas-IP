@@ -28,16 +28,18 @@ function App() {
         const ipData = responses.map((response) => ({
           ip: response.data.ip,
           org: response.data.org,
+          country: response.data.country,
+          region: response.data.region,
         }));
         setIpList([...ipList, ...ipData]);
       })
       .catch((error) => {
         console.log(error);
-        window.alert("Porfavor desactiva el bloqueador de anuncios (adblocker) para que la web funcione correctamente.");
+        window.alert("Por favor desactiva el bloqueador de anuncios (adblocker) para que la web funcione correctamente.");
       });
     setManualIp("");
   };
-  let requests;
+
   const access_token = "814ee26772f463";
   const handleFileSubmit = (event) => {
     event.preventDefault();
@@ -49,6 +51,8 @@ function App() {
         const ipData = responses.map((response) => ({
           ip: response.data.ip,
           org: response.data.org,
+          country: response.data.country,
+          region: response.data.region,
         }));
         setIpList(ipData);
       })
@@ -58,7 +62,7 @@ function App() {
       })
       .finally(() => setLoadingState(false));
   };
-  
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -79,80 +83,86 @@ function App() {
   };
 
   const handleDownload = () => {
-    const worksheet = XLSX.utils.json_to_sheet(ipList, { header: ["ip", "org"] });
+    if (ipList.length === 0) {
+      return;
+    }
+  
+    const worksheet = XLSX.utils.json_to_sheet(ipList, { header: ["ip", "org", "country", "region"] });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "IP Data");
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     saveAs(blob, "ip_data.xlsx");
   };
+  
 
   return (
     <div className="container">
       <h1 className="title" style={{ fontFamily: 'My Font' }}>IP-info-CIJ</h1>
       <div className="result-box">
-      <form onSubmit={handleFileSubmit}>
-  <label>
-    Cargue el listado:
-    <input type="file" onChange={handleFileChange} className="input-file" />
-  </label>
-  <button type="submit" className="small-button">
-    Consultar
-  </button>
-</form>
-<form onSubmit={handleManualIpSubmit}>
-  <label>
-    Ingrese las IP's:
-  </label>
-    <input type="text" value={manualIp} onChange={(e) => handleManualIpChange(e)} className="input-text" />
-  <button type="submit" className="small-button">
-    Cargar manualmente
-  </button>
-</form>
-<div className="loading-container">
-  {loading && (
-    <RingLoader
-      css={css`
-        margin: 0 auto;
-        display: block;
-      `}
-      size={50}
-      color={"#FFFFFF"}
-      loading={true}
-    />
-  )}
-</div>
-
-
-{ipList.length > 0 ? (
-  <>
-  <h2 className="subtitle">Resultados:</h2>
-    <button onClick={handleDownload} className="small-button">
-      Descargar resultados
-    </button>
-    
-    <div className="ip-list">
-      {ipList.map((ipData, index) => (
-        <div key={index}>
-          <p>
-            <strong>{ipData.ip}</strong>
-          </p>
-          <ul>
-            <li>Organización: {ipData.org}</li>
-          </ul>
-          <button onClick={() => handleDeleteIp(index)} className="small-button button-primary">Eliminar</button>
-
+        <form onSubmit={handleFileSubmit}>
+          <label>
+            Cargue el listado:
+            <input type="file" onChange={handleFileChange} className="input-file" />
+          </label>
+          <button type="submit" className="small-button">
+            Consultar
+          </button>
+        </form>
+        <form onSubmit={handleManualIpSubmit}>
+          <label>
+            Ingrese las IP's:
+          </label>
+          <input type="text" value={manualIp} onChange={handleManualIpChange} className="input-text" />
+          <button type="submit" className="small-button">
+            Cargar manualmente
+          </button>
+        </form>
+        <div className="loading-container">
+          {loading && (
+            <RingLoader
+              css={css`
+                margin: 0 auto;
+                display: block;
+              `}
+              size={50}
+              color={"#FFFFFF"}
+              loading={true}
+            />
+          )}
         </div>
-      ))}
-    </div>
-  </>
-) : (
-  <p></p>
-)}
+
+
+        {ipList.length > 0 ? (
+          <>
+            <h2 className="subtitle">Resultados:</h2>
+            <button onClick={handleDownload} className="small-button">
+              Descargar resultados
+            </button>
+
+            <div className="ip-list">
+              {ipList.map((ipData, index) => (
+                <div key={index}>
+                  <p>
+                    <strong>{ipData.ip}</strong>
+                  </p>
+                  <ul>
+                    <li>Organización: {ipData.org}</li>
+                    <li>País: {ipData.country}</li>
+                    <li>Provincia: {ipData.region}</li>
+                  </ul>
+                  <button onClick={() => handleDeleteIp(ipData.ip)} className="small-button button-primary">Eliminar</button>
+
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p></p>
+        )}
 
       </div>
     </div>
-    
   );
 }
 
