@@ -41,26 +41,37 @@ function App() {
   };
 
   const access_token = "814ee26772f463";
-  const handleFileSubmit = (event) => {
+  const batchSize = 100; // Number of IP addresses to query in each batch
+
+  const handleFileSubmit = async (event) => {
     event.preventDefault();
     setLoadingState(true);
     const ipArray = fileContent.split(/\r?\n/).filter((ip) => ip !== "");
-    const requests = ipArray.map((ip) => axios.get(`https://ipinfo.io/${ip}?token=${access_token}`));
-    Promise.all(requests)
-      .then((responses) => {
-        const ipData = responses.map((response) => ({
+    const batches = Math.ceil(ipArray.length / batchSize);
+    const ipData = [];
+
+    for (let i = 0; i < batches; i++) {
+      const batch = ipArray.slice(i * batchSize, (i + 1) * batchSize);
+      const requests = batch.map((ip) => axios.get(`https://ipinfo.io/${ip}?token=${access_token}`));
+      try {
+        const responses = await Promise.all(requests);
+        const batchIpData = responses.map((response) => ({
           ip: response.data.ip,
           org: response.data.org,
           country: response.data.country,
           region: response.data.region,
         }));
-        setIpList(ipData);
-      })
-      .catch((error) => {
+        ipData.push(...batchIpData);
+      } catch (error) {
         console.log(error);
         window.alert("Se produjo un error de red. Verifica tu conexión a Internet y asegúrate de que el adblocker esté desactivado.");
-      })
-      .finally(() => setLoadingState(false));
+        setLoadingState(false);
+        return;
+      }
+    }
+
+    setIpList(ipData);
+    setLoadingState(false);
   };
 
   const handleFileChange = (event) => {
@@ -86,7 +97,7 @@ function App() {
     if (ipList.length === 0) {
       return;
     }
-  
+
     const worksheet = XLSX.utils.json_to_sheet(ipList, { header: ["ip", "org", "country", "region"] });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "IP Data");
@@ -94,7 +105,7 @@ function App() {
     const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     saveAs(blob, "ip_data.xlsx");
   };
-  
+
 
   return (
     <div className="container">
