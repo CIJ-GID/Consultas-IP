@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/usr/src/app/src
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true

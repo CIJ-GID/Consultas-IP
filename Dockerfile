@@ -1,19 +1,26 @@
-FROM node:alpine as builder
+# Usa una imagen oficial de Node como imagen base
+FROM node:14
 
-WORKDIR /app
+# Establece el directorio de trabajo en el contenedor
+WORKDIR /usr/src/app
 
-COPY package.json .
+# Copia package.json y package-lock.json al directorio de trabajo
+COPY package*.json ./
+
+# Instala las dependencias de la aplicación
 RUN npm install
 
+# Copia el resto de la aplicación
 COPY . .
+
+# Construye la aplicación
 RUN npm run build
 
-FROM nginx:alpine
+# Expone el puerto en el que se ejecuta la aplicación
+EXPOSE 3000
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Define la variable de entorno
+ENV REACT_APP_API_URL=http://localhost:3001
 
-EXPOSE 80
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-CMD ["nginx", "-g", "daemon off;"]
+# Comando para ejecutar tu aplicación
+CMD ["npm", "start"]
