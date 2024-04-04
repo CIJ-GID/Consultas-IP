@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expone el puerto en el que se ejecuta la aplicación
-EXPOSE 3311
+EXPOSE 80
 
 # Define la variable de entorno
 ENV REACT_APP_API_URL=http://localhost:3001
