@@ -3,10 +3,6 @@ services:
   web:
     build: .
     ports:
-      - "3311:80"
-    volumes:
-      - ./src:/usr/src/app/src
+      - "4311:80"
     environment:
-      - NODE_ENV=development
-    stdin_open: true
-    tty: true
+      - NODE_ENV=production
